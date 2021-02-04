@@ -56,7 +56,7 @@ Format specifiers:
 %s                           : string (char arrays)
 %t                           : ptrdiff_t
 %u                           : unsigned int (by default, long)
-%x OR %X                     : hexadecimal int (by default, long)
+%x                           : hexadecimal int (by default, long)
 %z                           : size_t
 %%                           : prints '%'
 

@@ -1,13 +1,11 @@
-/*
-<h
+/* <h
 
 Creates a histogram of the counts of the length of words from a given input.
 
 Here, a "word" is any consecutive sequence of characters without spaces, tabs,
 or newlines.
 
-/h>
-*/
+/h> */
 
 #include <stdio.h>
 #include <stdlib.h>
