@@ -56,7 +56,6 @@ unsigned char flip_bits(unsigned char x, unsigned char p, unsigned char n) {
     mask = mask << (n_bits - (p + n));
     // Flip em with X-OR.
     y =  x ^ mask;
-
 }
 
 
@@ -66,4 +65,5 @@ int main(void) {
     printf("\n%i", flip_bits(x=170, p=2, n=3));
     printf("\n%x", x);
 
+    return 0;
 }

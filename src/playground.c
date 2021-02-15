@@ -1,33 +1,29 @@
 
 #include <stdio.h>
-#include <ctype.h>
-#include <math.h>
 #include <stdlib.h>
+#include <math.h>
+#include <ctype.h>
 
+double x = 1;
+int y = 2;
+double *dp = &x;
+int *ip = &y;
+int a[10];
+int *ap = &a[0];
 
-char c = 'l';
-char s[] = "hello";
-char s2[] = "hola1";
-unsigned char u;
-unsigned char x = 0;
-int n = 3;
-int p = 3;
-int nbits;
-int f;
-int mask;
+char *pmessage = "hello world";
 
 
 int main(void) {
+    // printf("\ndp: %%p: %p, %%i: %i", dp, dp);
+    // printf("\n*ip (%%i): %i, *ip (%%p): %p, *(ip + 1) (%%i): %i, *(ip + 1) (%%p): %p",*dp, *dp, *(dp + 1), *(dp + 1));
+    // printf("\nx: %%p: %p, %%i: %i", x, x);
+    // printf("\n\n%i", y = *&x);
+    // a[0] = 1;
+    // a[1] = 2;
+    // printf("\n%i, %i.", *(ap - 1), a[-1]);
+    // printf("\nip: %%p: %p, %%i: %i", ip, ip);
+    // printf("\nap: %%p: %p, %%i: %i", ap, ap);
 
-  // We'll do an exclusive-or b/w `x` and a mask.
-  
-  // Create a mask whose last `n` bits are ones, and all others zeros.
-  mask = ~(~0 << n);
-  // Shift mask so the `n` one-bits align with the bits in `x` we want to flip.
-  mask = mask << ( (sizeof(x) * 8) - (p + n) );
-  // Flip em with exclusive-or.
-  f =  x ^ mask;
-
-  printf("%i", sizeof(x) * 8 - (p + n));
 
 }

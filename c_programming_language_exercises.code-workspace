@@ -3,5 +3,10 @@
         {
             "path": "src"
         }
-    ]
+    ],
+    "settings": {
+        "files.associations": {
+            "stdio.h": "c"
+        }
+    }
 }

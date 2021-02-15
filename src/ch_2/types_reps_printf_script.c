@@ -64,9 +64,27 @@ Format specifiers:
 format with `%hi`; print in long long, hexademical format with `%llx`
 
 
+Escape Sequences:
+-----------------
+
+\a                           : alert (bell) 
+\b                           : backspace
+\f                           : form feed (new page)
+\n                           : line feed (new line)
+\r                           : carriage return
+\t                           : horizontal tab
+\v                           : vertical tab
+\\                           : backslash
+\?                           : question mark
+\'                           : single quote
+\"                           : double quote
+\ooo                         : octal number
+\xhh                         : hex number
+
+
 
 Notes:
-------------------------------
+------
 
 - ** Explicitly use the correct specs / functions for the respective data type,
   the below are examples of undefined behavior! **
