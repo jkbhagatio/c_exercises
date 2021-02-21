@@ -70,7 +70,7 @@ char get_op(void) {
                 cur_ch = pop_op_buf();
             }
             push_op_buf(cur_ch);
-            if (str_op[1] == 0) {  // if escape sequence or special op
+            if (str_op[1] == '\0') {  // if escape sequence or special op
                 return str_op[0];
             } else {
                 return BUILTIN_MATH;
