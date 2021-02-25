@@ -12,47 +12,69 @@ Implements a binary tree of sorted words via structs.
 #include <string.h>
 #include "count_words.h"
 
-#define MAX_WORD_LEN 100
+// maximum word length
+#define WORD_LEN_LIM 100
+// maximum allowable repeat counts on unique lines of the input
+#define N_REPEATS_LIM 100
 
 // struct representing node in tree. 
 struct node {
     char *word;          // the word
     int count;           // count of word in source
     struct node *left;   // child node to left
-    struct node *right;  // child node to right 
+    struct node *right;  // child node to right
+    int *line;           // the line(s) the word was found on
 };
 // pointer to root node
 struct node *root;
 // array holding current word read
-char word[MAX_WORD_LEN];
+char word[WORD_LEN_LIM];
 // flag to indicate whether print the end tree by words according to count 
 // (as opposed to alphabetically)
 int sort_by_count = 0;
+// flag to print line numbers words were found on
+int printlines = 0;
+// the number of times the word with the most repeats was found in the input
+int max_repeat = 0;
 
 // adds new node to tree, or updates an existing node
 struct node * add_node(struct node *p_node, char *word);
-// prints the tree
-void print_tree(struct node *root);
+// prints the tree alphabetically
+void print_tree_a(struct node *root);
+// prints the tree by word counts
+void print_tree_c(struct node *root);
 
 
 int main(int argc, char *argv[]) {
     
     // Get input flags.
     char **p_argv = argv;
-    *p_argv++;
-    while (--argc > 0) {
-        if (strcmp(*p_argv, "-sort")) {
-            if (strcmp(*++p_argv, "c")) {
+    while (*++p_argv) {
+        if (strcmp(*p_argv, "-sort") == 0) {
+            if (strcmp(*++p_argv, "c") == 0) {
                 sort_by_count = 1; }}
-        *p_argv++; }
+        else if (strcmp(*p_argv, "-printlines")) {
+            printlines = 1; }}
 
-    root = NULL;
     // Add nodes to tree recursively while reading input.
-    while (get_word(word, MAX_WORD_LEN) != EOF) {
-        root = add_node(root, word);}
-    printf("\nCount:    Word:");
-    printf("\n---------------");
-    print_tree(root);
+    root = NULL;
+    while (get_word(word, WORD_LEN_LIM) != EOF) {
+        root = add_node(root, word); }
+
+    // Print tree.
+    if (printlines) {
+        printf("\nCount:    Word:          Line Number"); 
+        printf("\n------------------------------------"); }
+    else {
+        printf("\nCount:    Word:"); 
+        printf("\n---------------"); }
+    if (sort_by_count) {         // print by count
+        while (max_repeat) {
+            print_tree_c(root);
+            max_repeat--; }}
+    else {                       // print alphabetically
+        print_tree_a(root); }
+    
     printf("\n");
     return 0; }
 
@@ -75,7 +97,8 @@ struct node * add_node(struct node *p_node, char *word) {
         p_node->left = p_node->right = NULL; }
     // Update node for a repeated word.
     else if ( (cmp_flag = strcmp(word, p_node->word)) == 0) {
-        p_node->count++; }
+        p_node->count++;
+        max_repeat++; }
     // Update left node child if new word is before current node's word.
     else if ( (cmp_flag < 0)) {
         p_node->left = add_node(p_node->left, word); }
@@ -86,13 +109,19 @@ struct node * add_node(struct node *p_node, char *word) {
     return p_node; }
 
 
-void print_tree(struct node *p_node) {
+void print_tree_a(struct node *p_node) {
     
-    if (!sort_by_count) {
-        if (p_node != NULL) {
-            print_tree(p_node->left);
-            printf("\n%3i       %s", p_node->count, p_node->word);
-            print_tree(p_node->right); }}
-    else {
+    if (p_node != NULL) {
+        print_tree_a(p_node->left);
+        printf("\n%3i       %s", p_node->count, p_node->word);
+        // if (printlines)
+        print_tree_a(p_node->right); }}
+ 
 
-    }}
+void print_tree_c(struct node *p_node) {
+
+    if (p_node != NULL) {
+        print_tree_c(p_node->left);
+        if (p_node->count == max_repeat) {
+            printf("\n%3i       %s", p_node->count, p_node->word); }
+        print_tree_c(p_node->right); }}
