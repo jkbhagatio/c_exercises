@@ -1,0 +1,9 @@
+test me baby one more time
+test me baby one more time
+don't test me. don't test me.
+
+- sort alphabetically (-sort a)
+- sort by count (-sort c)
+- print lines that words occur on (-printlines)
+- specify "noise" words to skip (-skip "...")
+- group by identicality of first 'n' letters (-group <n>)

@@ -5,44 +5,35 @@
 #include <ctype.h>
 #include <string.h>
 
-// // Array of string arrays (3d array: array of array of array of chars). 
-// // Because multidimensional arrays must specify bounds for all dimensions besides the first.
-// char **array_str_array[] = {{"hello", "hey", "hi"}, {"bello", "bay", "bye"}};
-// char *(*p_array_str_array)[3] = array_str_array;
+struct keyword {
+    char *word;
+    int count;
+};
+struct keyword tab[] = {  // struct array
+    "auto", 0, "break", 0, "case", 0, "char", 0, "const", 0, "continue", 0,
+    "default", 0, "do", 0, "double", 0, "else", 0, "enum", 0, "extern", 0, 
+    "float", 0, "for", 0, "goto", 0, "if", 0, "int", 0, "long", 0,
+    "register", 0, "return", 0, "short", 0, "signed", 0, "sizeof", 0, "static", 0, "struct", 0, "switch", 0, "typedef", 0, "union", 0, "unsigned", 0, "void", 0, "volatile", 0, "while", 0
+};
+struct keyword *p_tab = tab;
+enum {N_KEYWORDS = (sizeof tab / sizeof tab[0])};
+// char buffer
+char buf[100];
+// pointer to char buffer
+char *p_buf = buf;
 
-// // Array of array of string arrays (4d array: array of array of array of array of chars)
-// char *array_array_str_array[][2][2] = \
-// {{{"hello", "hey"}, {"bello", "bay"}}, {{"cello", "chay"}, {"dello", "day"}}};
-// char **(*p_array_array_str_array)[2] = array_array_str_array;
+#define get_next_ch(a, b) (a = b ? b : getchar())
 
-// char str[5] = "hello";
-// char *p_str = str;
-
-// int i = 5;
-
-// char *str_array_p[] = {"hello", "hey", "hi"};
-// char **p_str_array_p;
-// *p_str_array_p = &str_array_p;
-
-// char str_array_p[][10] = {"hello", "hey", "hi"};
-// char *p_str_array_p = str_array_p[0];
-
-// char *p_str_array_p2 = str_array_p[0];
-
-// char s[] = "hello";
-// char *p_s = s;
-// char *p2_s = s;
-
-
-void show(int x) {
-   
-   printf("Value of x is %d\n", x);
-}
+#define swap(t, x, y) \
+    { x = (t) x + (t) y; \
+      y = (t) x - (t) y; \
+      x = (t) x - (t) y; }
 
 int main() {
-   
-    void (*p)(int);
-    p = &show;
-    (*p)(7);
-    return 0;
+
+    int c, d;
+    c = 1;
+    d = 2;
+    swap(int, c, d);
+    // while (isspace(get_next_ch(c, *p_buf)));
 }
