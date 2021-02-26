@@ -29,13 +29,21 @@ struct node {
 struct node *root;
 // array holding current word read
 char word[WORD_LEN_LIM];
-// flag to indicate whether print the end tree by words according to count 
+// flag to indicate whether to print the tree by words sorted on their count 
 // (as opposed to alphabetically)
 int sort_by_count = 0;
 // flag to print line numbers words were found on
 int printlines = 0;
 // the number of times the word with the most repeats was found in the input
-int max_repeat = 0;
+int max_repeat = 1;
+// max word length of all words found
+int max_word_len = 0;
+// current line number being read
+int cur_line_num = 1;
+// placeholder int
+int i;
+// words to skip when reading from input
+char *skip_words[];
 
 // adds new node to tree, or updates an existing node
 struct node * add_node(struct node *p_node, char *word);
@@ -53,18 +61,26 @@ int main(int argc, char *argv[]) {
         if (strcmp(*p_argv, "-sort") == 0) {
             if (strcmp(*++p_argv, "c") == 0) {
                 sort_by_count = 1; }}
-        else if (strcmp(*p_argv, "-printlines")) {
-            printlines = 1; }}
+        else if (strcmp(*p_argv, "-printlines") == 0) {
+            printlines = 1; }
+        else if (strcmp(*p_argv, "-skip") == 0)
+            if (strcmp(*++p_argv, "default") == 0) {
+                char *skip_words[] = {"a", "is", "of", "the", "by"};
+            }}
 
     // Add nodes to tree recursively while reading input.
     root = NULL;
-    while (get_word(word, WORD_LEN_LIM) != EOF) {
+    while ((i = get_word(word, WORD_LEN_LIM)) != EOF) {
+        // On new lines, increment `cur_line_num` and continue.
+        if (printlines && (i == '\n')) {
+            cur_line_num++; 
+            continue; }
         root = add_node(root, word); }
 
     // Print tree.
     if (printlines) {
-        printf("\nCount:    Word:          Line Number"); 
-        printf("\n------------------------------------"); }
+        printf("\nCount:         Word:         Line Number(s)"); 
+        printf("\n-------------------------------------------"); }
     else {
         printf("\nCount:    Word:"); 
         printf("\n---------------"); }
@@ -81,8 +97,9 @@ int main(int argc, char *argv[]) {
 
 struct node * add_node(struct node *p_node, char *word) {
 
-    int cmp_flag;   // string comparison flag
-    char *word_cp;  // placeholder array to copy `word`
+    int cmp_flag;    // string comparison flag
+    char *word_cp;   // placeholder array to copy `word`
+    int *line_nums;  // placeholder for `p_node->line`
 
     // Add new node to tree.
     if (p_node == NULL) {  
@@ -94,11 +111,22 @@ struct node * add_node(struct node *p_node, char *word) {
             strcpy(word_cp, word); }
         p_node->word = word_cp;
         p_node->count = 1;
-        p_node->left = p_node->right = NULL; }
+        p_node->left = p_node->right = NULL;
+        // Store line number, and add pointer to it to node.
+        if (printlines) {
+            line_nums = (int *) malloc(sizeof(int) * N_REPEATS_LIM);
+            *line_nums = cur_line_num;
+            p_node->line = line_nums; }
+            // *line_nums++ = cur_line_num; }
+        if ( (i = strlen(word)) > max_word_len) {
+            max_word_len = i; }}
     // Update node for a repeated word.
     else if ( (cmp_flag = strcmp(word, p_node->word)) == 0) {
         p_node->count++;
-        max_repeat++; }
+        if (p_node->count > max_repeat) {
+            max_repeat = p_node->count; }
+        if (printlines) {
+            *( (p_node->line) += 1) = cur_line_num; }}
     // Update left node child if new word is before current node's word.
     else if ( (cmp_flag < 0)) {
         p_node->left = add_node(p_node->left, word); }
@@ -110,11 +138,15 @@ struct node * add_node(struct node *p_node, char *word) {
 
 
 void print_tree_a(struct node *p_node) {
-    
+
     if (p_node != NULL) {
         print_tree_a(p_node->left);
-        printf("\n%3i       %s", p_node->count, p_node->word);
-        // if (printlines)
+        printf("\n%3i       %*s", p_node->count, max_word_len, \
+               p_node->word);
+        if (printlines) {
+            while (*(p_node->line)) {
+                printf("%i ", (*(p_node->line)--)); }
+        }
         print_tree_a(p_node->right); }}
  
 
@@ -123,5 +155,9 @@ void print_tree_c(struct node *p_node) {
     if (p_node != NULL) {
         print_tree_c(p_node->left);
         if (p_node->count == max_repeat) {
-            printf("\n%3i       %s", p_node->count, p_node->word); }
+            printf("\n%3i    %*s        ", p_node->count, max_word_len, \
+                   p_node->word);
+            if (printlines) {
+                while (*(p_node->line)) {
+                    printf("%i ", (*(p_node->line)--)); }}}
         print_tree_c(p_node->right); }}

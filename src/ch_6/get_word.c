@@ -30,8 +30,12 @@ int get_word(char *word, int lim) {
     // preprocessor directives.
     get_next_ch(c, buf, i_buf);
     while (!isalpha(c)) {
-        if (isspace(c)) {                               // skip white space
-            while (isspace(get_next_ch(c, buf, i_buf))); }
+        if (isspace(c)) {                                // skip white space
+            while (isspace(c)) {                            
+                if (c == '\n') {                         // return new line
+                    return c; }
+                else {
+                    get_next_ch(c, buf, i_buf); }}}
         else if (c == '\"' || c == '\'')  {             // skip strings
             c2 = c;
             do {
@@ -55,7 +59,7 @@ int get_word(char *word, int lim) {
             while (!isspace(get_next_ch(c, buf, i_buf))); }
         else if (c == '<') {                            // skip to `>`
             while ((get_next_ch(c, buf, i_buf)) != '>'); }
-        else if (c == EOF) {                            // return if EOF
+        else if (c == EOF) {                            // return EOF
             return c; }
         else {
             get_next_ch(c, buf, i_buf); }}

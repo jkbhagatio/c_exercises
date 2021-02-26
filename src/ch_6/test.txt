@@ -6,4 +6,5 @@ don't test me. don't test me.
 - sort by count (-sort c)
 - print lines that words occur on (-printlines)
 - specify "noise" words to skip (-skip "...")
+- specify minimum word length (-minlength)
 - group by identicality of first 'n' letters (-group <n>)
