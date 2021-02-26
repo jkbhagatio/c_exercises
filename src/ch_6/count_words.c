@@ -16,6 +16,8 @@ Implements a binary tree of sorted words via structs.
 #define WORD_LEN_LIM 100
 // maximum allowable repeat counts on unique lines of the input
 #define N_REPEATS_LIM 100
+// maximum allowable number of words to skip
+#define N_SKIP_WORDS_LIM 100
 
 // struct representing node in tree. 
 struct node {
@@ -34,16 +36,28 @@ char word[WORD_LEN_LIM];
 int sort_by_count = 0;
 // flag to print line numbers words were found on
 int printlines = 0;
+// flag to skip words under a certain length
+int min_length_flag = 0;
+int min_length_word;
+// flag to skip certain words from input
+int skip_flag = 0;
+// flag to skip current word (only used if `skip_flag == 1`)
+int skip_cur_word;
+// words to skip when reading from input
+char *skip_words[] = {"a", "is", "of", "the", "by"};
+int skip_ct = 5;
+char *skip_words2[N_SKIP_WORDS_LIM];
+char **p_skip_words2 = skip_words2;
 // the number of times the word with the most repeats was found in the input
 int max_repeat = 1;
 // max word length of all words found
 int max_word_len = 0;
 // current line number being read
 int cur_line_num = 1;
-// placeholder int
-int i;
-// words to skip when reading from input
-char *skip_words[];
+// placeholder ints
+int i, i2;
+// placeholder char array
+char *str;
 
 // adds new node to tree, or updates an existing node
 struct node * add_node(struct node *p_node, char *word);
@@ -58,15 +72,27 @@ int main(int argc, char *argv[]) {
     // Get input flags.
     char **p_argv = argv;
     while (*++p_argv) {
-        if (strcmp(*p_argv, "-sort") == 0) {
+        if (strcmp(*p_argv, "--sort") == 0) {
             if (strcmp(*++p_argv, "c") == 0) {
                 sort_by_count = 1; }}
-        else if (strcmp(*p_argv, "-printlines") == 0) {
+        else if (strcmp(*p_argv, "--print-lines") == 0) {
             printlines = 1; }
-        else if (strcmp(*p_argv, "-skip") == 0)
-            if (strcmp(*++p_argv, "default") == 0) {
-                char *skip_words[] = {"a", "is", "of", "the", "by"};
-            }}
+        else if (strcmp(*p_argv, "--min-length-word") == 0) {
+            min_length_flag = 1;
+            min_length_word = atof(*++p_argv);
+        } 
+        else if (strcmp(*p_argv, "--skip-default") == 0) {
+            skip_flag = 1;
+        }
+        else if (strcmp(*p_argv, "--skip") == 0) {  // must be final input arg
+            skip_ct = 0;
+            skip_flag = 2;
+            while (*++p_argv) {
+                str = (char *) malloc(strlen(*p_argv) + 1);
+                strcpy(str, *p_argv);
+                *p_skip_words2++ = str;
+                skip_ct++; }
+            break; }}
 
     // Add nodes to tree recursively while reading input.
     root = NULL;
@@ -75,6 +101,23 @@ int main(int argc, char *argv[]) {
         if (printlines && (i == '\n')) {
             cur_line_num++; 
             continue; }
+        // Skip words if `skip_flag` specified.
+        if (skip_flag == 1) {
+            for (i2 = 0; i2 < skip_ct; i2++) {
+                if (strcmp(word, skip_words[i2]) == 0) {
+                    skip_cur_word = 1;
+                    break; }}}
+        if (skip_flag == 2) {
+            for (i2 = 0; i2 < skip_ct; i2++) {
+                if (strcmp(word, skip_words2[i2]) == 0) {
+                    skip_cur_word = 1;
+                    break; }}}
+        if (skip_cur_word) {
+            skip_cur_word = 0;
+            continue; }
+        if (min_length_word) {
+            if (strlen(word) < min_length_word) {
+                continue; }}
         root = add_node(root, word); }
 
     // Print tree.
@@ -107,8 +150,7 @@ struct node * add_node(struct node *p_node, char *word) {
         p_node = (struct node *) malloc(sizeof(struct node));
         // Store read word, and add pointer to it to node.
         word_cp = (char *) malloc(strlen(word) + 1);
-        if (word_cp != NULL) {
-            strcpy(word_cp, word); }
+        strcpy(word_cp, word);
         p_node->word = word_cp;
         p_node->count = 1;
         p_node->left = p_node->right = NULL;
@@ -117,7 +159,6 @@ struct node * add_node(struct node *p_node, char *word) {
             line_nums = (int *) malloc(sizeof(int) * N_REPEATS_LIM);
             *line_nums = cur_line_num;
             p_node->line = line_nums; }
-            // *line_nums++ = cur_line_num; }
         if ( (i = strlen(word)) > max_word_len) {
             max_word_len = i; }}
     // Update node for a repeated word.
