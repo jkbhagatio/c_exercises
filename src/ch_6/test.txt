@@ -8,3 +8,9 @@ don't test me. don't test me.
 - specify "noise" words to skip (-skip "...")
 - specify minimum word length (-minlength)
 - group by identicality of first 'n' letters (-group <n>)
+
+@todo: group by identicality
+    - get all words in a string array
+    - create an arbitrary number of groups (create an array of an array of strings)
+    - group them by comparing each word to the previous
+    - for each group, print out the strings, separate groups by a new line.
