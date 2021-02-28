@@ -2,8 +2,6 @@
 
 Gets a word from an input file.
 
-@todo: change code within main `while` to switch-case, and change formatting of `{}`
-
 /h> */
 
 #include <stdio.h>
