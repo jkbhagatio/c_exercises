@@ -1,7 +1,6 @@
 /* <h
 
-Header file for `sort_lines`. Declares functions in `alloc`, `rw_lines`, and 
-`sort`. 
+Header file for `count_words`.
 
 /h> */
 

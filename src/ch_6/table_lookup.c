@@ -27,12 +27,8 @@ struct entry * lookup(char *);
 unsigned hash(char *);
 // uninstalls a name and value from the table
 void uninstall(char *);
-
-
-int main(int argc, char *argv[]) {
-    
-    
-    return 0; }
+// gets word from input file: special case for `#define`s
+int get_defines(char *word, int lim);
 
 
 struct entry * install(char *name, char *val) {
@@ -110,7 +106,79 @@ void uninstall(char *name) {
                 // So where match is found, set the previous entry's `next`
                 // to the match's `next` to bypass the match in the chain.
                 p_entry2->next = p_entry->next; }
-            // Free the entry. 
+            // Free the entry (the struct AND its individual members, since space for members wasn't allocated (members were just defined as pointers) when the struct was defined).
+            free(p_entry->name);
+            free(p_entry->val);
             free(p_entry); }}
 
     printf("Warning: '%s' not found in table.", name); }
+
+
+#define MAX_CH_WORD 100
+// maximum chars in the char buffer
+#define MAX_CH_OP 100
+// char buffer
+char buf[MAX_CH_OP];
+// index to buf
+int i_buf = 0;
+
+int get_defines(char *word, int lim) {
+
+    int c, c2;       // placeholder chars
+    char *w = word;  // pointer to beginning of `word`
+    // gets next char from `buf` or `getchar()`
+    #define get_next_ch(c, buf, i) (c = (i > 0) ? buf[--i] : getchar())
+
+    // Skip non-alphanum chars, white space, strings, and comments.
+    get_next_ch(c, buf, i_buf);
+    while (!isalnum(c)) {
+        if (isspace(c)) {                                // skip white space
+            while (isspace(c)) {                            
+                if (c == '\n') {                         // return new line
+                    return c; }
+                else {
+                    get_next_ch(c, buf, i_buf); }}}
+        else if (c == '\"' || c == '\'')  {             // skip strings
+            c2 = c;
+            do {
+                get_next_ch(c, buf, i_buf); }
+            while (c != c2);
+            get_next_ch(c, buf, i_buf); }
+        else if (c == '/') {                            // skip comments
+            if (get_next_ch(c2, buf, i_buf) == '/') {   // skip `//` comments
+                while (get_next_ch(c, buf, i_buf) != '\n'); }
+            else if (c2 == '*') {                       // skip `/*` comments
+                while (1) {
+                    get_next_ch(c, buf, i_buf);
+                    if (c == '*') {
+                        if (get_next_ch(c2, buf, i_buf) == '/') {
+                            break; } 
+                        else {  // replace `c2`
+                            buf[i_buf++] = c2; }}}} 
+            else {  // replace `c2`
+                buf[i_buf++] = c2; }}
+        else if (c == '#' ) {                           // break on cpp dir
+            break; }
+        else if (c == '<') {                            // skip to `>`
+            while ((get_next_ch(c, buf, i_buf)) != '>'); }
+        else if (c == EOF) {                            // return EOF
+            return c; }
+        else {
+            get_next_ch(c, buf, i_buf); }}
+
+    // Get word.
+    *w = c;
+    while (--lim) {
+        get_next_ch(*++w, buf, i_buf);
+        // Break on non-alphanumeric, non-underscore, non-single quote.
+        if (!isalnum(*w) && !(*w == '_') && !(*w == '\'')) {
+            buf[i_buf++] = *w;  // put char back on buffer
+            break; }}
+
+    if (lim == 0) {
+        printf("Warning: Max word length limit (%i) reached", MAX_CH_WORD);
+    }
+
+    // Close string.
+    *w = '\0';
+    return word[0]; }
