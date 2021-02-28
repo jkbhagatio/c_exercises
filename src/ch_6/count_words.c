@@ -4,11 +4,6 @@ Counts the occurrences of all words in a text file.
 
 Implements a binary tree of sorted words via structs.
 
-@todo: group by identicality
-    - get all words in a string array
-    - create an arbitrary number of groups (create an array of an array of strings)
-    - group them by comparing each word to the previous
-    - for each group, print out the strings, separate groups by a new line.
 /h> */
 
 #include <stdio.h>
