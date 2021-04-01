@@ -9,7 +9,8 @@
             "stdio.h": "c",
             "sort_lines.h": "c",
             "string.h": "c",
-            "ctype.h": "c"
+            "ctype.h": "c",
+            "stdlib.h": "c"
         }
     }
 }

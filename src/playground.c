@@ -1,9 +1,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
-#include <ctype.h>
 #include <string.h>
+#include <ctype.h>
+#include <math.h>
+
 
 struct keyword {
     char *word;
@@ -18,7 +19,7 @@ struct keyword tab[] = {  // struct array
 struct keyword *p_tab = tab;
 enum {N_KEYWORDS = (sizeof tab / sizeof tab[0])};
 // char buffer
-char buf[100];
+char buf[] = "hello";
 // pointer to char buffer
 char *p_buf = buf;
 
@@ -31,9 +32,14 @@ char *p_buf = buf;
 
 int main() {
 
-    int c, d;
-    c = 1;
-    d = 2;
-    swap(int, c, d);
-    // while (isspace(get_next_ch(c, *p_buf)));
+    char *lines[2];
+    char buf[] = "hello";
+    char * str;
+    str = (char *) malloc(strlen(buf) + 1);
+    strcpy(str, buf);
+    lines[0] = buf;
+    lines[1] = str;
+    printf("\n%s", lines[0]);
+    printf("\n%s", lines[1]);
 }
+
